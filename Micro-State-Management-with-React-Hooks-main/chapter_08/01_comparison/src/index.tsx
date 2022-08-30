@@ -1,7 +1,7 @@
-import { StrictMode } from 'react';
-import ReactDOM from 'react-dom';
-import AppWithContext from './AppWithContext';
-import AppWithJotai from './AppWithJotai';
+import { StrictMode } from 'react'
+import ReactDOM from 'react-dom'
+import AppWithContext from './AppWithContext'
+import AppWithJotai from './AppWithJotai'
 
 ReactDOM.render(
   <StrictMode>
@@ -11,4 +11,4 @@ ReactDOM.render(
     <AppWithJotai />
   </StrictMode>,
   document.getElementById('root')
-);
+)
