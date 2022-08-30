@@ -4,4 +4,4 @@ Build React Project Using React Hook
 
 - Designing React Hooks the Right Way, PacktPub, 2022
 - Micro State Management with React Hooks, PacktPub, 2022
-- React Hook in Action, Manning, 2021
+- React Hooks in Action, Manning, 2021
