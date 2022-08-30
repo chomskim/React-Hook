@@ -1,36 +1,88 @@
-import { useState } from 'react'
+import { useReducer, useEffect } from 'react'
 import staticData from '../../static.json'
 import { FaArrowRight } from 'react-icons/fa'
+import Spinner from '../UI/Spinner'
+
+import reducer from './reducer'
+import getData from '../../utils/api'
+
+const { sessions, days } = staticData
+const initialState = {
+  group: 'Rooms',
+  bookableIndex: 0,
+  hasDetails: true,
+  bookables: [],
+  isLoading: true,
+  error: false,
+}
 
 export default function BookablesList() {
-  const [group, setGroup] = useState('Kit')
-  const { bookables, sessions, days } = staticData
+  const [state, dispatch] = useReducer(reducer, initialState)
+
+  const { group, bookableIndex, bookables } = state
+  const { hasDetails, isLoading, error } = state
 
   const bookablesInGroup = bookables.filter((b) => b.group === group)
-  const [bookableIndex, setBookableIndex] = useState(1)
+  const bookable = bookablesInGroup[bookableIndex]
   const groups = [...new Set(bookables.map((b) => b.group))]
 
-  const bookable = bookablesInGroup[bookableIndex]
+  useEffect(() => {
+    dispatch({ type: 'FETCH_BOOKABLES_REQUEST' })
 
-  const [hasDetails, setHasDetails] = useState(false)
+    getData('http://localhost:3001/bookables')
+      .then((bookables) =>
+        dispatch({
+          type: 'FETCH_BOOKABLES_SUCCESS',
+          payload: bookables,
+        })
+      )
+
+      .catch((error) =>
+        dispatch({
+          type: 'FETCH_BOOKABLES_ERROR',
+          payload: error,
+        })
+      )
+  }, [])
+
+  function changeGroup(e) {
+    dispatch({
+      type: 'SET_GROUP',
+      payload: e.target.value,
+    })
+  }
+
+  function changeBookable(selectedIndex) {
+    dispatch({
+      type: 'SET_BOOKABLE',
+      payload: selectedIndex,
+    })
+  }
 
   function nextBookable() {
-    setBookableIndex((i) => (i + 1) % bookablesInGroup.length)
+    dispatch({ type: 'NEXT_BOOKABLE' })
   }
-  function changeBookable(selectedIndex) {
-    setBookableIndex(selectedIndex)
-    console.log(selectedIndex)
+
+  function toggleDetails() {
+    dispatch({ type: 'TOGGLE_HAS_DETAILS' })
   }
+
+  if (error) {
+    return <p>{error.message}</p>
+  }
+
+  if (isLoading) {
+    return (
+      <p>
+        <Spinner /> Loading bookables...
+      </p>
+    )
+  }
+
   return (
     <>
       <div>
-        <select
-          value={group}
-          onChange={(e) => {
-            setGroup(e.target.value)
-            setBookableIndex(0)
-          }}
-        >
+        <select value={group} onChange={changeGroup}>
           {groups.map((g) => (
             <option value={g} key={g}>
               {g}
@@ -60,7 +112,7 @@ export default function BookablesList() {
               <h2>{bookable.title}</h2>
               <span className='controls'>
                 <label>
-                  <input type='checkbox' checked={hasDetails} onChange={() => setHasDetails((has) => !has)} />
+                  <input type='checkbox' checked={hasDetails} onChange={toggleDetails} />
                   Show Details
                 </label>
               </span>

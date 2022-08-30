@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react'
+import { useState } from 'react'
 import staticData from '../../static.json'
 
 export default function UsersList() {
@@ -7,7 +7,7 @@ export default function UsersList() {
   const user = users[userIndex]
 
   return (
-    <Fragment>
+    <>
       <ul className='users items-list-nav'>
         {users.map((u, i) => (
           <li key={u.id} className={i === userIndex ? 'selected' : null}>
@@ -29,6 +29,6 @@ export default function UsersList() {
           </div>
         </div>
       )}
-    </Fragment>
+    </>
   )
 }

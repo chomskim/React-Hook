@@ -25,3 +25,11 @@ React Router (v6) is used to link to and render the three pages.
 ## Components
 
 There is a component for each page. There is also a UserPicker component that is currently just a drop-down list with one item: Users.
+
+## Setting up a JSON server
+
+    npm install -g json-server
+
+    json-server --watch db.json --port 3001
+
+    json-server --watch db.json --port 3001 --delay 3000
