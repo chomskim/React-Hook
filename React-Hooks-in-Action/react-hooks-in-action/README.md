@@ -11,6 +11,7 @@ The app was created with create-react-app:
 React Router and React Icons were then installed:
 
     yarn add history react-icons react-router-dom
+    yarn add react-query
 
 ## Pages
 

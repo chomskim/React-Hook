@@ -1,9 +1,24 @@
-import BookablesList from "./BookablesList";
+import { Routes, Route } from 'react-router-dom'
 
-export default function BookablesPage () {
+import BookablesView from './BookablesView'
+import BookableEdit from './BookableEdit'
+import BookableNew from './BookableNew'
+
+export default function BookablesPage() {
   return (
-    <main className="bookables-page">
-      <BookablesList/>
-    </main>
-  );
+    <Routes>
+      <Route path='/:id'>
+        <BookablesView />
+      </Route>
+      <Route path='/'>
+        <BookablesView />
+      </Route>
+      <Route path='/:id/edit'>
+        <BookableEdit />
+      </Route>
+      <Route path='/new'>
+        <BookableNew />
+      </Route>
+    </Routes>
+  )
 }
