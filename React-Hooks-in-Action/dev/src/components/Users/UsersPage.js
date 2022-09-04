@@ -1,17 +1,48 @@
-import { useState } from 'react'
+import { useState, unstable_useDeferredValue as useDeferredValue, Suspense } from 'react'
+
 import UsersList from './UsersList'
+import { useUser } from './UserContext'
+import PageSpinner from '../UI/PageSpinner'
 import UserDetails from './UserDetails'
-import { useUser } from './UserContext' // import custom hook
+
+import { useQueryClient } from 'react-query'
+import getData from '../../utils/api'
 
 export default function UsersPage() {
-  const [user, setUser] = useState(null)
-  const [loggedInUser] = useUser() // use custom hook
-  const currentUser = user || loggedInUser
+  const [loggedInUser] = useUser()
+  const [selectedUser, setSelectedUser] = useState(null)
+  const user = selectedUser || loggedInUser
+  const queryClient = useQueryClient()
 
-  return (
+  const deferredUser = useDeferredValue(user) || user
+
+  const isPending = deferredUser !== user
+
+  function switchUser(nextUser) {
+    setSelectedUser(nextUser)
+
+    queryClient.prefetchQuery(['user', nextUser.id], () => getData(`http://localhost:3001/users/${nextUser.id}`))
+
+    queryClient.prefetchQuery(
+      `http://localhost:3001/img/${nextUser.img}`,
+      () =>
+        new Promise((resolve) => {
+          const img = new Image()
+          img.onload = () => resolve(img)
+          img.src = `http://localhost:3001/img/${nextUser.img}`
+        })
+    )
+  }
+
+  return user ? (
     <main className='users-page'>
-      <UsersList user={currentUser} setUser={setUser} />
-      <UserDetails user={currentUser} />
+      <UsersList user={user} setUser={switchUser} isPending={isPending} />
+
+      <Suspense fallback={<PageSpinner />}>
+        <UserDetails userID={deferredUser.id} isPending={isPending} />
+      </Suspense>
     </main>
+  ) : (
+    <PageSpinner />
   )
 }

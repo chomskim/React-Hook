@@ -1,34 +1,34 @@
-import { useEffect, useState } from 'react'
-import getData from './api'
+import {useEffect, useState} from "react";
+import getData from "./api";
 
-export default function useFetch(url) {
-  const [data, setData] = useState()
-  const [error, setError] = useState(null)
-  const [status, setStatus] = useState('idle')
+export default function useFetch (url) {
+  const [data, setData] = useState();
+  const [error, setError] = useState(null);
+  const [status, setStatus] = useState("idle");
 
   useEffect(() => {
-    let doUpdate = true
+    let doUpdate = true;
 
-    setStatus('loading')
-    setData(undefined)
-    setError(null)
+    setStatus("loading");
+    setData(undefined);
+    setError(null);
 
     getData(url)
-      .then((data) => {
+      .then(data => {
         if (doUpdate) {
-          setData(data)
-          setStatus('success')
+          setData(data);
+          setStatus("success");
         }
       })
-      .catch((error) => {
+      .catch(error => {
         if (doUpdate) {
-          setError(error)
-          setStatus('error')
+          setError(error);
+          setStatus("error");
         }
-      })
+      });
 
-    return () => (doUpdate = false)
-  }, [url])
+    return () => doUpdate = false;
+  }, [url]);
 
-  return { data, status, error }
+  return {data, status, error};
 }

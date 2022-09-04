@@ -1,43 +1,44 @@
-import { sessions as sessionNames } from '../../static.json'
-import { addDays, shortISO } from '../../utils/date-wrangler'
+import {sessions as sessionNames} from "../../static.json";
+import {addDays, shortISO} from "../../utils/date-wrangler";
 
-export function getGrid(bookable, startDate) {
-  const dates = bookable.days.sort().map((d) => shortISO(addDays(startDate, d)))
+export function getGrid (bookable, startDate) {
 
-  const sessions = bookable.sessions.map((i) => sessionNames[i])
+  const dates = bookable.days.sort().map(
+    d => shortISO(addDays(startDate, d))
+  );
 
-  const grid = {}
+  const sessions = bookable.sessions.map(i => sessionNames[i]);
 
-  sessions.forEach((session) => {
-    grid[session] = {}
-    dates.forEach(
-      (date) =>
-        (grid[session][date] = {
-          session,
-          date,
-          bookableId: bookable.id,
-          title: '',
-        })
-    )
-  })
+  const grid = {};
+
+  sessions.forEach(session => {
+    grid[session] = {};
+    dates.forEach(date => grid[session][date] = {
+      session,
+      date,
+      bookableId: bookable.id,
+      title: ""
+    });
+  });
 
   return {
     grid,
     dates,
-    sessions,
-  }
+    sessions
+  };
 }
 
-export function transformBookings(bookingsArray) {
+export function transformBookings (bookingsArray) {
   return bookingsArray.reduce((bookings, booking) => {
-    const { session, date } = booking
+
+    const {session, date} = booking;
 
     if (!bookings[session]) {
-      bookings[session] = {}
+      bookings[session] = {};
     }
 
-    bookings[session][date] = booking
+    bookings[session][date] = booking;
 
-    return bookings
-  }, {})
+    return bookings;
+  }, {});
 }
